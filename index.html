@@ -8,9 +8,19 @@
         height: 100%;
         margin: 0;
       }
+      #highlight-select {
+        bottom: 10px;
+        left: 10px;
+        position: absolute;
+        z-index: 1;
+      }
     </style>
   </head>
   <body>
     <div id="map"></div>
+    <select id="highlight-select">
+      <option default value="KG">Highlight KG</option>
+      <option value="GKZ">Highlight Gemeinde</option>
+    </select>
   </body>
 </html>

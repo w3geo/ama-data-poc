@@ -21,19 +21,25 @@ const style = {
     type: 'fill',
     paint: {
       'fill-color': 'red',
-      'fill-outline-color': 'black'
+      'fill-outline-color': 'black',
+      'stroke-width': 1
     }
   }]
 }
 
+const highlightSelect = /** @type {HTMLSelectElement} */ (document.getElementById('highlight-select'));
+
 createMap('map', style).then(map => {
   const kgLayer = /** @type {import("ol/layer/VectorTile").default} */ (getLayers(map, 'tiles')[0]);
-  let selected;
+  let selected, selectWhat;
 
   // Click handler for map clicks
   map.on('click', e => {
+    selectWhat = highlightSelect.options[highlightSelect.selectedIndex].value;
     const features = map.getFeaturesAtPixel(e.pixel);
-    const newSelected = features ? features[0].getId() : undefined;
+    const newSelected = features ?
+      (selectWhat === 'KG' ? features[0].getId() : features[0].get('GKZ')) :
+      undefined;
     if (selected !== newSelected) {
       selected = newSelected;
       kgLayer.changed();
@@ -45,10 +51,12 @@ createMap('map', style).then(map => {
   kgLayer.setStyle((feature, resolution) => {
     // get the style as configured by the `style` object above
     const styles = styleFunction(feature, resolution);
-    if (selected && feature.getId() === selected) {
-      // change fill color for selected KG
+    if (selected && (selectWhat === 'KG' ? feature.getId() : feature.get('GKZ')) === selected) {
+      // change style for selected KG or GKZ
       const style = styles[0];
-      style.getFill().setColor('yellow');
+      style.getFill().setColor('cyan');
+      style.getStroke().setWidth(1e-9);
+      style.setZIndex(1);
     }
     return styles;
   });

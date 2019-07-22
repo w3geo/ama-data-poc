@@ -1,0 +1,31 @@
+{
+  "name": "ama-highlight-poc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "download": "wget http://www.bev.gv.at/pls/portal/docs/PAGE/BEV_PORTAL_CONTENT_ALLGEMEIN/0200_PRODUKTE/UNENTGELTLICHE_PRODUKTE_DES_BEV/VGD_Oesterreich_gst.zip -d data/",
+    "tiles-lowzoom": "tippecanoe --force --maximum-zoom=7 --no-tiny-polygon-reduction --low-detail=10 --full-detail=11 --detect-shared-borders --no-tile-compression --convert-stringified-ids-to-numbers --use-attribute-for-id=KG_NR --include=GKZ data/VGD_Oesterreich_gst.geojson --output-to-directory dist/tiles",
+    "tiles-hizoom": "tippecanoe --allow-existing --minimum-zoom=8  --no-tiny-polygon-reduction --detect-shared-borders --no-tile-compression --convert-stringified-ids-to-numbers --use-attribute-for-id=KG_NR --include=GKZ data/VGD_Oesterreich_gst.geojson --output-to-directory dist/tiles",
+    "tiles": "npm run tiles-lowzoom && npm run tiles-hizoom",
+    "postinstall": "npm run download && npm run tiles",
+    "start": "webpack-dev-server"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ol": "^6.0.0-beta.11",
+    "ol-mapbox-style": "^5.0.0-beta.3"
+  },
+  "devDependencies": {
+    "css-loader": "^3.1.0",
+    "html-webpack-plugin": "^3.2.0",
+    "node-wget": "^0.4.3",
+    "shp2json": "^1.2.1",
+    "style-loader": "^0.23.1",
+    "webpack": "^4.36.1",
+    "webpack-cli": "^3.3.6",
+    "webpack-dev-server": "^3.7.2"
+  }
+}

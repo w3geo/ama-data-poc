@@ -15,22 +15,62 @@ const style = {
     }
   },
   layers: [{
-    id: 'tiles',
+    id: 'background',
+    type: 'background',
+    paint: {
+      'background-color': '#ccc'
+    }
+  }, {
+    id: 'top1',
     source: 'tiles',
     'source-layer': 'VGD_Oesterreich_gst',
     type: 'fill',
+    filter: ['==', 'PRODKAT_RANK_K_VWE', '1'],
     paint: {
       'fill-color': 'red',
-      'fill-outline-color': 'black',
-      'stroke-width': 1
+      'fill-outline-color': 'black'
+    }
+  }, {
+    id: 'other',
+    source: 'tiles',
+    'source-layer': 'VGD_Oesterreich_gst',
+    type: 'fill',
+    filter: ['!=', 'PRODKAT_RANK_K_VWE', '1'],
+    paint: {
+      'fill-color': 'white',
+      'fill-outline-color': 'black'
     }
   }]
 }
 
 const highlightSelect = /** @type {HTMLSelectElement} */ (document.getElementById('highlight-select'));
 
+let joinData, kgLayer;
+
+// Get external join data
+fetch('https://gist.githubusercontent.com/ahocevar/28bebd1f59ea4d3997fb8f928543ba96/raw/b14ce45e282b2d05c49a949ad228671389ba47f3/testdata-top1.csv')
+  .then(response => response.text())
+  .then(text => {
+    const lines = text.split('\n');
+    // csv - first line contains the column names
+    const columns = lines.shift().split(',');
+    joinData = lines.reduce((acc, line) => {
+      const values = line.split(',');
+      // first value of the line contains the join id (KGNR)
+      const id = values[0];
+      const item = acc[id] = {};
+      for (let i = 1, ii = columns.length; i < ii; ++i) {
+        item[columns[i]] = values[i];
+      }
+      return acc;
+    }, {});
+    if (kgLayer) {
+      kgLayer.changed();
+    }
+  });
+
 createMap('map', style).then(map => {
-  const kgLayer = /** @type {import("ol/layer/VectorTile").default} */ (getLayers(map, 'tiles')[0]);
+  kgLayer = /** @type {import("ol/layer/VectorTile").default} */ (getLayers(map, 'tiles')[0]);
   let selected, selectWhat;
 
   // Click handler for map clicks
@@ -46,13 +86,19 @@ createMap('map', style).then(map => {
     }
   });
 
-  // Highlight style for KG
+  // Modified style function for highlighting and joining
   const styleFunction = kgLayer.getStyleFunction();
   kgLayer.setStyle((feature, resolution) => {
+    const properties = feature.getProperties();
+    // join properties from joinData by join id (KGNR)
+    const id = feature.getId();
+    if (joinData && joinData[id]) {
+      Object.assign(properties, joinData[id]);
+    }
     // get the style as configured by the `style` object above
     const styles = styleFunction(feature, resolution);
     if (selected && (selectWhat === 'KG' ? feature.getId() : feature.get('GKZ')) === selected) {
-      // change style for selected KG or GKZ
+      // highlighting: change style for selected KG or GKZ
       const style = styles[0];
       style.getFill().setColor('cyan');
       style.getStroke().setWidth(1e-9);

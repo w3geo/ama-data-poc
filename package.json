@@ -9,7 +9,8 @@
     "tiles-lowzoom": "tippecanoe --force --maximum-zoom=7 --no-tiny-polygon-reduction --low-detail=10 --full-detail=11 --detect-shared-borders --no-tile-compression --convert-stringified-ids-to-numbers --use-attribute-for-id=KG_NR --include=GKZ data/VGD_Oesterreich_gst.geojson --output-to-directory dist/tiles",
     "tiles-hizoom": "tippecanoe --allow-existing --minimum-zoom=8  --no-tiny-polygon-reduction --detect-shared-borders --no-tile-compression --convert-stringified-ids-to-numbers --use-attribute-for-id=KG_NR --include=GKZ data/VGD_Oesterreich_gst.geojson --output-to-directory dist/tiles",
     "tiles": "npm run tiles-lowzoom && npm run tiles-hizoom",
-    "postinstall": "npm run download && npm run tiles",
+    "postinstall": "npm run download && npm run geojson npm run tiles",
+    "geojson": "shp2json data/VGD_Oesterreich_gst.zip > data/VGD_Oesterreich_gst.geojson",
     "start": "webpack-dev-server"
   },
   "author": "",

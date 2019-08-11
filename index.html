@@ -14,6 +14,18 @@
         position: absolute;
         z-index: 1;
       }
+      #map-select {
+        left: 50px;
+        top: 10px;
+        position: absolute;
+        z-index: 1;
+      }
+      #legend {
+        bottom: 40px;
+        left: 10px;
+        position: absolute;
+        z-index: 1;
+      }
     </style>
   </head>
   <body>
@@ -22,5 +34,7 @@
       <option default value="KG">Highlight KG</option>
       <option value="GKZ">Highlight Gemeinde</option>
     </select>
+    <select id="map-select"></select>
+    <div id="legend"></div>
   </body>
 </html>

@@ -85,7 +85,7 @@ const configureMap = map => {
     const evaluate = evaluator.evaluate.bind(evaluator);
     mouseover = (context, obj) => {
       const rawValue = evaluate(context, obj);
-      return isNaN(Number(rawValue)) ? productCategories[rawValue] : rawValue + ' %';
+      return typeof rawValue === 'string' ? productCategories[rawValue] : (rawValue === null ? '' : rawValue + ' %');
     }
   } else {
     mouseover = () => '';

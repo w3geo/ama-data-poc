@@ -9,11 +9,11 @@
     "postinstall": "npm run create-dirs",
     "data-download": "wget http://www.bev.gv.at/pls/portal/docs/PAGE/BEV_PORTAL_CONTENT_ALLGEMEIN/0200_PRODUKTE/UNENTGELTLICHE_PRODUKTE_DES_BEV/VGD_Oesterreich_gst.zip -d data/",
     "data-geojson": "shp2json data/VGD_Oesterreich_gst.zip > data/VGD_Oesterreich_gst.geojson",
-    "data-join": "node scripts/prepare-data",
-    "data": "npm run data-download && npm run data-geojson && npm run data-join",
-    "tiles-lowzoom": "tippecanoe --force --maximum-zoom=8 --grid-low-zooms --coalesce-smallest-as-needed --low-detail=7 --full-detail=7 --simplification=10 --detect-shared-borders --no-tile-compression --maximum-tile-bytes=800000 --convert-stringified-ids-to-numbers --use-attribute-for-id=KG_NR data/snar.json --output-to-directory dist/tiles",
+    "prepare-data": "node --max-old-space-size=8192 scripts/prepare-data",
+    "data": "npm run data-download && npm run data-geojson && npm run prepare-data",
+    "tiles-lowzoom": "tippecanoe --force --maximum-zoom=8 --grid-low-zooms --coalesce-smallest-as-needed --low-detail=7 --full-detail=7 --simplification=10 --detect-shared-borders --no-tile-compression --maximum-tile-bytes=865000 --convert-stringified-ids-to-numbers --use-attribute-for-id=KG_NR data/tile-data.json --output-to-directory dist/tiles",
     "tiles-remove-unused": "rimraf dist/tiles/8",
-    "tiles-hizoom": "tippecanoe --allow-existing --minimum-zoom=8 --no-tiny-polygon-reduction --simplification=10 --detect-shared-borders --no-tile-compression --maximum-tile-bytes=800000 --convert-stringified-ids-to-numbers --use-attribute-for-id=KG_NR data/snar.json --output-to-directory dist/tiles",
+    "tiles-hizoom": "tippecanoe --allow-existing --minimum-zoom=8 --no-tiny-polygon-reduction --simplification=10 --detect-shared-borders --no-tile-compression --maximum-tile-bytes=865000 --convert-stringified-ids-to-numbers --use-attribute-for-id=KG_NR data/tile-data.json --output-to-directory dist/tiles",
     "tiles": "npm run tiles-lowzoom && npm run tiles-remove-unused && npm run tiles-hizoom",
     "start": "webpack-dev-server"
   },
@@ -21,7 +21,7 @@
   "license": "ISC",
   "dependencies": {
     "@mapbox/mapbox-gl-style-spec": "^13.7.2",
-    "ol": "^6.0.0-beta.12",
+    "ol": "^6.0.0-beta.15",
     "ol-mapbox-style": "^5.0.0-beta.3"
   },
   "devDependencies": {

@@ -3,8 +3,11 @@ import createMap, { getLayers } from 'ol-mapbox-style';
 import { VectorTile } from 'ol/layer';
 import { Style, Fill } from 'ol/style';
 import styles from './style';
-import { toLonLat } from 'ol/proj';
+import { toLonLat, transformExtent } from 'ol/proj';
 import { expression } from '@mapbox/mapbox-gl-style-spec';
+// @ts-ignore
+import productCategories from './data/prodkat-codes.json';
+
 
 const mapSelect = /** @type {HTMLSelectElement} */ (document.getElementById('map-select'));
 for (const name in styles) {
@@ -60,7 +63,17 @@ const configureMap = map => {
   // Add legend
   const legend = document.getElementById('legend');
   if (style.metadata && 'ama:legend' in style.metadata) {
-    legend.innerHTML = `<img src="${style.metadata['ama:legend']}">`;
+    const legendData = style.metadata['ama:legend'];
+    let legendMarkup = '<table>';
+    for (const key in legendData) {
+      let value = legendData[key];
+      if (value in productCategories) {
+        value = productCategories[value];
+      }
+      legendMarkup += `<tr><td style="width:16px;background-color:${key}">&nbsp;</td><td>${value}</td></tr>`;
+    }
+    legendMarkup += '</table>';
+    legend.innerHTML = legendMarkup;
   } else {
     legend.innerHTML = '';
   }
@@ -69,7 +82,11 @@ const configureMap = map => {
   let mouseover;
   if (style.metadata && 'ama:mouseover' in style.metadata) {
     const evaluator = expression.createExpression(style.metadata['ama:mouseover']).value;
-    mouseover = evaluator.evaluate.bind(evaluator);
+    const evaluate = evaluator.evaluate.bind(evaluator);
+    mouseover = (context, obj) => {
+      const rawValue = evaluate(context, obj);
+      return isNaN(Number(rawValue)) ? productCategories[rawValue] : rawValue + ' %';
+    }
   } else {
     mouseover = () => '';
   }
@@ -93,4 +110,8 @@ mapSelect.addEventListener('change', () => {
 });
 
 // Initial map
-createMap('map', styles[mapSelect.firstElementChild.getAttribute('value')]()).then(configureMap);
+createMap('map', styles[mapSelect.firstElementChild.getAttribute('value')]()).then(map => {
+  const extent = transformExtent([9.530952, 46.372652, 17.162069, 49.021167], 'EPSG:4326', 'EPSG:3857');
+  map.getView().fit(extent, {padding: [5, 5, 5, 5]});
+  configureMap(map);
+});

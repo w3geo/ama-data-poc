@@ -5,6 +5,7 @@ import { Style, Fill } from 'ol/style';
 import styles from './style';
 import { toLonLat, transformExtent } from 'ol/proj';
 import { expression } from '@mapbox/mapbox-gl-style-spec';
+import debounce from 'debounce';
 // @ts-ignore
 import productCategories from './data/prodkat-codes.json';
 
@@ -91,13 +92,17 @@ const configureMap = map => {
     mouseover = () => '';
   }
   const target = map.getTargetElement();
-  map.on('pointermove', e => {
+  function getInfo(e) {
+    if (e.dragging) {
+      return;
+    }
     target.title = '';
     map.forEachFeatureAtPixel(e.pixel, feature => {
       target.title = mouseover({}, {properties: feature.getProperties()});
       return feature;
-    })
-  })
+    });
+  }
+  map.on('pointermove', debounce(getInfo, 200, undefined));
 };
 
 // select map from dropdown

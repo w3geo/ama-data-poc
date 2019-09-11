@@ -53,9 +53,10 @@ lines.forEach(line => {
   }
   for (let i = 0, ii = categories.length; i < ii; ++i) {
     if (categories[i][level] === line[column.PRODKAT_BEZ]) {
-      if (item[`RANK_${categories[i][level - 1]}`] === undefined || rank < item[`${categories[i][level - 1]}_RANK`]) {
-        item[`RANK_${categories[i][level - 1]}`] = rank;
-        item[prodkatCodes[level - 1][categories[i][level - 1]]] = line[column.PRODKAT_CODE];
+      const parentProdkatCode = prodkatCodes[level - 1][categories[i][level - 1]];
+      if (item[`RANK_${parentProdkatCode}`] === undefined || rank < item[`RANK_${parentProdkatCode}`]) {
+        item[`RANK_${parentProdkatCode}`] = rank;
+        item[parentProdkatCode] = line[column.PRODKAT_CODE];
       }
     }
   }

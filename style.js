@@ -192,10 +192,10 @@ const styles = {};
 for (const prodkatCode in productCategories) {
   const prodkat = productCategories[prodkatCode];
   if (prodkatCode in subcategories) {
-    const name = `${prodkat} (bio+konventionell) - Dominante Produktkategorie (2018)`;
+    const name = `${prodkat} (${prodkatCode}, bio+konventionell) - Dominante Produktkategorie (2018)`;
     styles[name] = rankStyle.bind(this, prodkatCode, name, subcategories[prodkatCode]);
   } else {
-    const name = `${prodkat} (bio+konventionell) - Anteil genutzter Fläche an beantragter Fläche (2018)`
+    const name = `${prodkat} (${prodkatCode}, bio+konventionell) - Anteil genutzter an beantragter Fläche (2018)`
     styles[name] = percentStyle.bind(this, prodkatCode, name);
   }
 }

@@ -11,9 +11,10 @@ import productCategories from './data/prodkat-codes.json';
 
 
 const mapSelect = /** @type {HTMLSelectElement} */ (document.getElementById('map-select'));
-for (const name in styles) {
+const styleNames = Object.keys(styles).sort((a, b) => a.localeCompare(b));
+for (let i = 0, ii = styleNames.length; i < ii; ++i) {
   const option = /** @type {HTMLOptionElement} */ (document.createElement('option'));
-  option.value = option.innerHTML = name;
+  option.value = option.innerHTML = styleNames[i];
   mapSelect.appendChild(option);
 }
 

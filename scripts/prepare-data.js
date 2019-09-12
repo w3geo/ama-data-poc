@@ -42,7 +42,7 @@ lines.forEach(line => {
   }
   const vwe = line[column.VWE_LEVEL_CODE];
   const level = levels.indexOf(line[column.PRODKAT_LEVEL_CODE]);
-  if (level === 0 || vwe !== 'KG') {
+  if (vwe !== 'KG') {
     return;
   }
   const kgNr = line[column.SL_KG_NR];
@@ -53,7 +53,7 @@ lines.forEach(line => {
   }
   for (let i = 0, ii = categories.length; i < ii; ++i) {
     if (categories[i][level] === line[column.PRODKAT_BEZ]) {
-      const parentProdkatCode = prodkatCodes[level - 1][categories[i][level - 1]];
+      const parentProdkatCode = level === 0 ? 'TOP' : prodkatCodes[level - 1][categories[i][level - 1]];
       if (item[`RANK_${parentProdkatCode}`] === undefined || rank < item[`RANK_${parentProdkatCode}`]) {
         item[`RANK_${parentProdkatCode}`] = rank;
         item[parentProdkatCode] = line[column.PRODKAT_CODE];
@@ -70,17 +70,22 @@ lines.forEach(line => {
 const prodkatCodesArray = prodkatCodes.map(codes => Object.keys(codes).reduce((prev, cur) => {
   prev[codes[cur]] = cur; return prev;
 }, {}));
+const prodkatCodeObject = prodkatCodesArray.reduce((prev, cur) => {Object.assign(prev, cur); return prev;}, {});
+prodkatCodeObject['TOP'] = '_Gesamt';
 fs.writeFileSync(
   path.join(__dirname, '..', 'data', 'prodkat-codes.json'),
-  JSON.stringify(prodkatCodesArray.reduce((prev, cur) => {Object.assign(prev, cur); return prev;}, {})),
+  JSON.stringify(prodkatCodeObject),
   {encoding: 'utf8'}
 );
 
 // For each category, write an array of subcategories.
-const subcategories = {};
+const subcategories = {'TOP': []};
 for (let j = 0; j < 3; ++j) {
   for (let i = 0, ii = categories.length; i < ii; ++i) {
     let categoryCode = prodkatCodes[j][categories[i][j]];
+    if (j === 0 && subcategories['TOP'].indexOf(categoryCode) === -1) {
+      subcategories['TOP'].push(categoryCode);
+    }
     if (categoryCode === undefined) {
       categoryCode = categories[i][j];
     }

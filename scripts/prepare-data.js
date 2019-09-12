@@ -15,11 +15,13 @@ const column = {
   PRODKAT_CODE: columns.indexOf('PRODKAT_CODE'),
   PRODKAT_BEZ: columns.indexOf('PRODKAT_BEZ'),
   PRODKAT_LEVEL_CODE: columns.indexOf('PRODKAT_LEVEL_CODE'),
-  PRODKAT_RANK_KUB_VWE: columns.indexOf('PRODKAT_RANK_KUB_VWE'),
   PRODKAT_PROZ_FL_BEAN_KUB_VWE: columns.indexOf('PRODKAT_PROZ_FL_BEAN_KUB_VWE'),
   VWE_LEVEL_CODE: columns.indexOf('VWE_LEVEL_CODE')
 }
 const levels = ['FNAR', 'KUGU', 'KUAR', 'SNAR'];
+lines.sort((a, b) => {
+  return levels.indexOf(a[column.PRODKAT_LEVEL_CODE]) - levels.indexOf(b[column.PRODKAT_LEVEL_CODE]);
+});
 
 // Collect product category codes for all levels
 const prodkatCodes = [];
@@ -47,21 +49,25 @@ lines.forEach(line => {
   }
   const kgNr = line[column.SL_KG_NR];
   const item = kgNr in items ? items[kgNr] : {};
-  const rank = Number(line[column.PRODKAT_RANK_KUB_VWE]);
-  if (!rank || isNaN(rank)) {
+  const percent = Number(line[column.PRODKAT_PROZ_FL_BEAN_KUB_VWE].replace(',', '.'));
+  if (!percent || isNaN(percent)) {
     return;
   }
   for (let i = 0, ii = categories.length; i < ii; ++i) {
     if (categories[i][level] === line[column.PRODKAT_BEZ]) {
       const parentProdkatCode = prodkatCodes[level - 1][categories[i][level - 1]];
-      if (item[`RANK_${parentProdkatCode}`] === undefined || rank < item[`RANK_${parentProdkatCode}`]) {
-        item[`RANK_${parentProdkatCode}`] = rank;
+      if (level > 1 && item[prodkatCodes[level - 2][categories[i][level - 2]]] !== parentProdkatCode) {
+        continue;
+      }
+      if (item[`RANK_${parentProdkatCode}`] === undefined || percent > item[`RANK_${parentProdkatCode}`]) {
+        item[`RANK_${parentProdkatCode}`] = percent;
         item[parentProdkatCode] = line[column.PRODKAT_CODE];
       }
     }
   }
-  if (level === 3) {
-    item[`${line[column.PRODKAT_CODE]}_PROZ`] = Number(Number(line[column.PRODKAT_PROZ_FL_BEAN_KUB_VWE].replace(',', '.')).toFixed(1));
+  const percentToPrecision = Number(percent.toFixed(1));
+  if (level === 3 && percentToPrecision !== 0) {
+    item[`${line[column.PRODKAT_CODE]}_PROZ`] = percentToPrecision;
   }
   items[kgNr] = item;
 });

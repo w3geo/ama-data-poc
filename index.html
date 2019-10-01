@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Vector Tiles Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <style>
+      html, body, #map {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+      }
+      #highlight-select {
+        bottom: 10px;
+        left: 10px;
+        position: absolute;
+        z-index: 1;
+      }
+      #map-select {
+        left: 50px;
+        top: 10px;
+        position: absolute;
+        max-width: 80%;
+        z-index: 1;
+      }
+      #legend {
+        bottom: 40px;
+        left: 10px;
+        position: absolute;
+        font: 10px sans-serif;
+        background-color: white;
+        z-index: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <select id="highlight-select">
+      <option default value="KG">Highlight KG</option>
+      <option value="GKZ">Highlight Gemeinde</option>
+    </select>
+    <select id="map-select"></select>
+    <div id="legend"></div>
+  <script type="text/javascript" src="main.js"></script></body>
+</html>

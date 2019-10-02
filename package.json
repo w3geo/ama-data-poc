@@ -15,18 +15,21 @@
     "tiles-remove-unused": "rimraf dist/tiles/8",
     "tiles-hizoom": "tippecanoe --allow-existing --minimum-zoom=8 --no-tiny-polygon-reduction --simplification=10 --detect-shared-borders --no-tile-compression --maximum-tile-bytes=865000 --convert-stringified-ids-to-numbers --use-attribute-for-id=KG_NR data/tile-data.json --output-to-directory dist/tiles",
     "tiles": "npm run tiles-lowzoom && npm run tiles-remove-unused && npm run tiles-hizoom",
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server",
+    "build": "webpack",
+    "publish": "node scripts/gh-pages.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@mapbox/mapbox-gl-style-spec": "^13.7.2",
     "debounce": "^1.2.0",
-    "ol": "^6.0.0-beta.15",
+    "ol": "^6.0.1",
     "ol-mapbox-style": "^5.0.0-beta.3"
   },
   "devDependencies": {
     "css-loader": "^3.1.0",
+    "gh-pages": "^2.1.1",
     "html-webpack-plugin": "^3.2.0",
     "node-wget": "^0.4.3",
     "rimraf": "^2.6.3",

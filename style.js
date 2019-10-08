@@ -22,7 +22,7 @@ function percentStyle(prodkatCode, name, center = [13.3, 47.7], zoom = 6) {
     sources: {
       tiles: {
         type: 'vector',
-        tiles: './tiles/{z}/{x}/{y}.pbf',
+        tiles: './tiles-pct/{z}/{x}/{y}.pbf',
         bounds: [9.530952, 46.372652, 17.162069, 49.021167],
         maxzoom: 14
       }
@@ -36,7 +36,7 @@ function percentStyle(prodkatCode, name, center = [13.3, 47.7], zoom = 6) {
     }, {
       id: 'kg-name',
       source: 'tiles',
-      'source-layer': 'tiledata',
+      'source-layer': 'tilespct',
       type: 'symbol',
       minzoom: 10,
       layout: {
@@ -47,60 +47,60 @@ function percentStyle(prodkatCode, name, center = [13.3, 47.7], zoom = 6) {
     }, {
       id: '0-1%',
       source: 'tiles',
-      'source-layer': 'tiledata',
+      'source-layer': 'tilespct',
       type: 'fill',
-      filter: ['<', ['to-number', ['get', `${prodkatCode}_PROZ`]], 1],
+      filter: ['<', ['to-number', ['get', `${prodkatCode}_PCT`]], 1],
       paint: {
         'fill-color': '#edf8fb'
       }
     }, {
       id: '1-5%',
       source: 'tiles',
-      'source-layer': 'tiledata',
+      'source-layer': 'tilespct',
       type: 'fill',
-      filter: ['all', ['>=', ['to-number', ['get', `${prodkatCode}_PROZ`]], 1], ['<', ['to-number', ['get', `${prodkatCode}_PROZ`]], 5]],
+      filter: ['all', ['>=', ['to-number', ['get', `${prodkatCode}_PCT`]], 1], ['<', ['to-number', ['get', `${prodkatCode}_PCT`]], 5]],
       paint: {
         'fill-color': '#ccece6'
       }
     }, {
       id: '5-10%',
       source: 'tiles',
-      'source-layer': 'tiledata',
+      'source-layer': 'tilespct',
       type: 'fill',
-      filter: ['all', ['>=', ['to-number', ['get', `${prodkatCode}_PROZ`]], 5], ['<', ['to-number', ['get', `${prodkatCode}_PROZ`]], 10]],
+      filter: ['all', ['>=', ['to-number', ['get', `${prodkatCode}_PCT`]], 5], ['<', ['to-number', ['get', `${prodkatCode}_PCT`]], 10]],
       paint: {
         'fill-color': '#99d8c9'
       }
     }, {
       id: '10-20%',
       source: 'tiles',
-      'source-layer': 'tiledata',
+      'source-layer': 'tilespct',
       type: 'fill',
-      filter: ['all', ['>=', ['to-number', ['get', `${prodkatCode}_PROZ`]], 10], ['<', ['to-number', ['get', `${prodkatCode}_PROZ`]], 20]],
+      filter: ['all', ['>=', ['to-number', ['get', `${prodkatCode}_PCT`]], 10], ['<', ['to-number', ['get', `${prodkatCode}_PCT`]], 20]],
       paint: {
         'fill-color': '#66c2a4'
       }
     }, {
       id: '20-50%',
       source: 'tiles',
-      'source-layer': 'tiledata',
+      'source-layer': 'tilespct',
       type: 'fill',
-      filter: ['all', ['>=', ['to-number', ['get', `${prodkatCode}_PROZ`]], 20], ['<', ['to-number', ['get', `${prodkatCode}_PROZ`]], 50]],
+      filter: ['all', ['>=', ['to-number', ['get', `${prodkatCode}_PCT`]], 20], ['<', ['to-number', ['get', `${prodkatCode}_PCT`]], 50]],
       paint: {
         'fill-color': '#2ca25f'
       }
     }, {
       id: '50-100%',
       source: 'tiles',
-      'source-layer': 'tiledata',
+      'source-layer': 'tilespct',
       type: 'fill',
-      filter: ['>=', ['to-number', ['get', `${prodkatCode}_PROZ`]], 50],
+      filter: ['>=', ['to-number', ['get', `${prodkatCode}_PCT`]], 50],
       paint: {
         'fill-color': '#006d2c'
       }
     }],
     metadata: {
-      'ama:mouseover': ['to-number', ['to-number', ['get', `${prodkatCode}_PROZ`]]],
+      'ama:mouseover': ['to-number', ['to-number', ['get', `${prodkatCode}_PCT`]]],
       'ama:legend': {
         '#edf8fb': '< 1 %',
         '#ccece6': '1 - 5 %',
@@ -130,7 +130,7 @@ function rankStyle(prodkatCode, name, categories, center = [13.3, 47.7], zoom = 
     sources: {
       tiles: {
         type: 'vector',
-        tiles: './tiles/{z}/{x}/{y}.pbf',
+        tiles: './tiles-t1v/{z}/{x}/{y}.pbf',
         bounds: [9.530952, 46.372652, 17.162069, 49.021167],
         maxzoom: 14
       }
@@ -144,7 +144,7 @@ function rankStyle(prodkatCode, name, categories, center = [13.3, 47.7], zoom = 
     }, {
       id: 'kg-name',
       source: 'tiles',
-      'source-layer': 'tiledata',
+      'source-layer': 'tilest1v',
       type: 'symbol',
       minzoom: 10,
       layout: {
@@ -163,7 +163,7 @@ function rankStyle(prodkatCode, name, categories, center = [13.3, 47.7], zoom = 
     style.layers.push(/** @type {*} */ ({
       id: category,
       source: 'tiles',
-      'source-layer': 'tiledata',
+      'source-layer': 'tilest1v',
       type: 'fill',
       filter: ['==', ['get', `${prodkatCode}`], `${category}`],
       paint: {
@@ -175,7 +175,7 @@ function rankStyle(prodkatCode, name, categories, center = [13.3, 47.7], zoom = 
   style.layers.push(/** @type {*} */ ({
     id: 'other',
     source: 'tiles',
-    'source-layer': 'tiledata',
+    'source-layer': 'tilest1v',
     type: 'fill',
     filter: ['==', ['get', `${prodkatCode}`], null],
     paint: {
@@ -194,10 +194,12 @@ for (const prodkatCode in productCategories) {
   if (prodkatCode in subcategories) {
     const name = `${prodkat} (${prodkatCode}, bio+konventionell) - Dominante Produktkategorie (2018)`;
     styles[name] = rankStyle.bind(this, prodkatCode, name, subcategories[prodkatCode]);
-  } else {
-    const name = `${prodkat} (${prodkatCode}, bio+konventionell) - Anteil genutzter an beantragter Fläche (2018)`
-    styles[name] = percentStyle.bind(this, prodkatCode, name);
   }
+  if (prodkatCode === 'TOP') {
+    continue;
+  }
+  const name = `${prodkat} (${prodkatCode}, bio+konventionell) - Anteil genutzter an beantragter Fläche (2018)`
+  styles[name] = percentStyle.bind(this, prodkatCode, name);
 }
 
 export default styles;

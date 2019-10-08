@@ -8,17 +8,28 @@ https://www.data.gv.at/katalog/dataset/51bdc6dc-25ae-41de-b8f3-938f9056af62
 In addition to a recent [git](https://git-scm.org/) and [node](https://nodejs.org/) version, this project expects [tippecanoe](https://github.com/mapbox/tippecanoe) to be installed.
 
 ## Installation
+```bash
+git clone git@github.com:w3geo/ama-data-poc.git
+cd ama-data-poc
+npm install
+```
 
-    git clone git@github.com:w3geo/ama-data-poc.git
-    cd ama-data-poc
-    npm install
+## Importing data
 
-Now you need to download AMA data from https://pydio.services.ama.at/owncloud/index.php/s/BSGjvsiLBIPPQBU (password can be obtained from Wolfgang Tinkl). When downloaded and unpacked, find the file named `FULL_A3FL_ERG_2018_expdate-2019-07-18-08h34.csv` and copy it to the `data/` directory of this project.
+Now you need to download AMA data, e.g. from  https://pydio.services.ama.at/owncloud/index.php/s/7NLnYGFmvoWbVUz (password can be obtained from Wolfgang Tinkl). When downloaded and unpacked, find the file named `FULL_A3FL_ERG_2019_KUB-GROE3BETR_expdate-2019-10-03-09h03.zip` and copy it to the `data/` directory of this project.
 
 Finaly, we'll need to prepare our data and create tiles:
+```bash
+npm run data
+npm run tiles
+```
 
-    npm run data
-    npm run tiles
+**Note:** To generate tiles for a different file, call the following scripts:
+```bash
+npm run external-data
+CSV=path/to/MY-DATA.CSV npm run prepare-data
+npm run tiles
+```
 
 ## Start the application
 

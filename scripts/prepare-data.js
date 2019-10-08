@@ -1,5 +1,27 @@
 const fs = require('fs');
 const path = require('path');
+const parseArgv = require('simple-arg-parser');
+
+const args = parseArgv(process.argv, [{
+  name: 'topic',
+  shorthand: 't',
+  default: 'pct',
+  description: 'Topic to extract from the csv file. Supported values are "pct" and "t1v"'
+}, {
+  name: "csv",
+  alias: ['file'],
+  shorthand: 'f',
+  default: 'FULL_A3FL_ERG_2019_KUB-GROE3BETR_expdate-2019-10-03-09h03.csv',
+  description: 'csv file containing the data import. Name usually starts with "FULL_A3FL_ERG_2019_KUB-GROE3BETR".'
+}], {
+  description: "Creates a GeoJSON file for tile generation from an input CSV file",
+  defaultHelp: true
+});
+
+if (args['help']) {
+  process.exit(0);
+}
+const topic = 'topic' in args ? args['topic'].value : 'pct';
 
 // Read categories
 const categoryData = fs.readFileSync(path.join(__dirname, '..', 'data', 'categories.csv'), {encoding: 'utf8'});
@@ -7,7 +29,10 @@ const categories = categoryData.split(/\r?\n/).map(line => line.split(';'));
 categories.shift();
 
 // Read data
-const data = fs.readFileSync(path.join(__dirname, '..', 'data', 'FULL_A3FL_ERG_2018_expdate-2019-07-18-08h34.csv'), {encoding: 'latin1'});
+const csv = 'csv' in args ?
+  args['csv'].value :
+  (process.env.CSV || path.join(__dirname, '..', 'data', 'FULL_A3FL_ERG_2019_KUB-GROE3BETR_expdate-2019-10-03-09h03.csv'));
+const data = fs.readFileSync(csv, {encoding: 'latin1'});
 const lines = data.split(/\r?\n/).map(line => line.split(';'));
 const columns = lines.shift();
 const column = {
@@ -51,18 +76,27 @@ lines.forEach(line => {
   if (!rank || isNaN(rank)) {
     return;
   }
-  for (let i = 0, ii = categories.length; i < ii; ++i) {
-    if (categories[i][level] === line[column.PRODKAT_BEZ]) {
-      const parentProdkatCode = level === 0 ? 'TOP' : prodkatCodes[level - 1][categories[i][level - 1]];
-      if (item[`RANK_${parentProdkatCode}`] === undefined || rank < item[`RANK_${parentProdkatCode}`]) {
-        item[`RANK_${parentProdkatCode}`] = rank;
-        item[parentProdkatCode] = line[column.PRODKAT_CODE];
+
+  if (topic === 't1v') {
+    // Top1 variable
+    for (let i = 0, ii = categories.length; i < ii; ++i) {
+      if (categories[i][level] === line[column.PRODKAT_BEZ]) {
+        const parentProdkatCode = level === 0 ? 'TOP' : prodkatCodes[level - 1][categories[i][level - 1]];
+        if (item[`T1V_${parentProdkatCode}`] === undefined || rank < item[`T1V_${parentProdkatCode}`]) {
+          item[`T1V_${parentProdkatCode}`] = rank;
+          item[parentProdkatCode] = line[column.PRODKAT_CODE];
+        }
       }
     }
+  } else if (topic === 'pct') {
+  // Percent
+  const percent = Number(line[column.PRODKAT_PROZ_FL_BEAN_KUB_VWE].replace(',', '.'));
+  if (percent !== 0) {
+    item[`${line[column.PRODKAT_CODE]}_PCT`] = percent;
   }
-  if (level === 3) {
-    item[`${line[column.PRODKAT_CODE]}_PROZ`] = Number(Number(line[column.PRODKAT_PROZ_FL_BEAN_KUB_VWE].replace(',', '.')).toFixed(1));
-  }
+}
+
+
   items[kgNr] = item;
 });
 
@@ -108,7 +142,7 @@ featureCollection.features.forEach(feature => {
   const kgNr = properties.KG_NR;
   Object.assign(properties, items[kgNr]);
   for (const key in properties) {
-    if (key.startsWith('RANK')) {
+    if (key.startsWith('T1V')) {
       delete properties[key];
     }
   }
@@ -129,4 +163,4 @@ featureCollection.features.forEach(feature => {
   delete properties.VA_NR;
 });
 
-fs.writeFileSync(path.join(__dirname, '..', 'data', 'tile-data.json'), JSON.stringify(featureCollection), {encoding: 'utf8'});
+fs.writeFileSync(path.join(__dirname, '..', 'data', `tiles-${topic}.json`), JSON.stringify(featureCollection), {encoding: 'utf8'});

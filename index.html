@@ -13,9 +13,22 @@
       }
       #highlight-select {
         bottom: 10px;
-        left: 10px;
+        left: 240px;
+        width: 190px;
         position: absolute;
         z-index: 1;
+      }
+      #mouseover-info {
+        background-color: white;
+        bottom: 10px;
+        left: 10px;
+        width: 220px;
+        height: 14px;
+        padding: 3px;
+        position: absolute;
+        font: 12px sans-serif;
+        white-space: nowrap;
+        overflow: hidden;
       }
       #map-select {
         left: 50px;
@@ -36,6 +49,7 @@
   </head>
   <body>
     <div id="map"></div>
+    <div id="mouseover-info"></div>
     <select id="highlight-select">
       <option default value="KG">Highlight KG</option>
       <option value="GKZ">Highlight Gemeinde</option>

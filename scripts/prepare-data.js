@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const parseArgv = require('simple-arg-parser');
+const toWgs84 = require('reproject').toWgs84;
 
 const args = parseArgv(process.argv, [{
   name: 'topic',
@@ -136,7 +137,11 @@ for (let j = 0; j < 3; ++j) {
 fs.writeFileSync(path.join(__dirname, '..', 'data', 'prodkat-subcategories.json'), JSON.stringify(subcategories), {encoding: 'utf8'});
 
 // Join data and geometries, using KG codes as join key.
-const featureCollection = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'VGD_Oesterreich_gst.geojson'), {encoding: 'utf8'}));
+const featureCollection = toWgs84(
+  JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'VGD_Oesterreich_gst.geojson'), {encoding: 'utf8'})),
+  'EPSG:31287', {
+    'EPSG:31287': '+proj=lcc +lat_1=49 +lat_2=46 +lat_0=47.5 +lon_0=13.33333333333333 +x_0=400000 +y_0=400000 +ellps=bessel +towgs84=577.326,90.129,463.919,5.137,1.474,5.297,2.4232 +units=m +no_defs',
+  });
 featureCollection.features.forEach(feature => {
   const properties = feature.properties;
   const kgNr = properties.KG_NR;
@@ -146,6 +151,8 @@ featureCollection.features.forEach(feature => {
       delete properties[key];
     }
   }
+  feature.id = Number(kgNr);
+  delete properties.KG_NR;
   delete properties.BKZ;
   delete properties.BL;
   delete properties.BL_KZ;
@@ -163,4 +170,4 @@ featureCollection.features.forEach(feature => {
   delete properties.VA_NR;
 });
 
-fs.writeFileSync(path.join(__dirname, '..', 'data', `tiles-${topic}.json`), JSON.stringify(featureCollection), {encoding: 'utf8'});
+fs.writeFileSync(path.join(__dirname, '..', 'data', 'kg.json'), JSON.stringify(featureCollection), {encoding: 'utf8'});

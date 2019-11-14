@@ -5,7 +5,6 @@ import { Style, Fill } from 'ol/style';
 import styles from './style';
 import { toLonLat, transformExtent } from 'ol/proj';
 import { expression } from '@mapbox/mapbox-gl-style-spec';
-import debounce from 'debounce';
 // @ts-ignore
 import productCategories from './data/prodkat-codes.json';
 
@@ -37,15 +36,16 @@ const configureMap = map => {
   // Click handler for map clicks
   map.on('click', e => {
     selectWhat = highlightSelect.options[highlightSelect.selectedIndex].value;
-    const features = map.getFeaturesAtPixel(e.pixel);
-    const newSelected = features ?
-      (selectWhat === 'KG' ? features[0].getId() : features[0].get('GKZ')) :
-      undefined;
-    if (selected !== newSelected) {
-      selected = newSelected;
-      highlightLayer.setVisible(!!selected);
-      highlightLayer.changed();
-    }
+    kgLayer.getFeatures(e.pixel).then(features => {
+      const newSelected = features.length ?
+        (selectWhat === 'KG' ? features[0].getId() : features[0].get('GKZ')) :
+        undefined;
+      if (selected !== newSelected) {
+        selected = newSelected;
+        highlightLayer.setVisible(!!selected);
+        highlightLayer.changed();
+      }
+    });
   });
 
   // Style for KG/Gemeinde highlighting
@@ -93,17 +93,18 @@ const configureMap = map => {
     mouseover = () => '';
   }
   const target = map.getTargetElement();
+  const mouseoverInfo = document.getElementById('mouseover-info');
   function getInfo(e) {
     if (e.dragging) {
       return;
     }
     target.title = '';
-    map.forEachFeatureAtPixel(e.pixel, feature => {
-      target.title = mouseover({}, {properties: feature.getProperties()});
-      return feature;
+    kgLayer.getFeatures(e.pixel).then(features => {
+      const feature = features.length ? features[0] : undefined;
+      mouseoverInfo.innerHTML = feature ? mouseover({}, {properties: feature.getProperties()}) : '';
     });
   }
-  map.on('pointermove', debounce(getInfo, 200, undefined));
+  map.on('pointermove', getInfo);
 };
 
 // select map from dropdown

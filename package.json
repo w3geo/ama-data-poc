@@ -11,10 +11,12 @@
     "external-data:prepare": "node scripts/gem-bez-bl.js",
     "data:pct": "node --max-old-space-size=8192 scripts/prepare-data --topic=pct",
     "data:t1v": "node --max-old-space-size=8192 scripts/prepare-data --topic=t1v",
+    "data:top": "node --max-old-space-size=8192 scripts/prepare-data --topic=top",
     "data": "npm run external-data:convert && npm run external-data:prepare && npm run tiles",
-    "tiles-base": "tippecanoe --no-tiny-polygon-reduction --low-detail=10 --simplification=10 --detect-shared-borders --no-tile-compression --maximum-tile-bytes=1028000 data/bl.json data/bez.json data/gem.json data/kg.json",
+    "tiles-base": "tippecanoe --no-tiny-polygon-reduction --low-detail=10 --simplification=2 --detect-shared-borders --no-tile-compression --maximum-tile-bytes=1035000 data/bl.json data/bez.json data/gem.json data/kg.json",
     "tiles:pct": "npm run data:pct && rimraf dist/tiles-pct && npm run tiles-base -- --output-to-directory dist/tiles-pct",
     "tiles:t1v": "npm run data:t1v && rimraf dist/tiles-t1v && npm run tiles-base -- --output-to-directory dist/tiles-t1v",
+    "tiles:top": "npm run data:top && rimraf dist/tiles-top && npm run tiles-base -- --output-to-directory dist/tiles-top",
     "tiles": "npm run tiles:pct && npm run tiles:t1v",
     "start": "webpack-dev-server",
     "build": "webpack",
@@ -24,7 +26,7 @@
   "license": "ISC",
   "dependencies": {
     "@mapbox/mapbox-gl-style-spec": "^13.7.2",
-    "ol": "^6.1.1-dev.1573743852980",
+    "ol": "^6.1.1-dev.1574091714101",
     "ol-mapbox-style": "^5.0.2"
   },
   "devDependencies": {

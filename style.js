@@ -101,7 +101,7 @@ function percentStyle(prodkatCode, name, center = [13.3, 47.7], zoom = 6) {
     }, {
       id: 'bl',
       source: 'tiles',
-      'source-layer': 'bl',
+      'source-layer': 'kg',
       type: 'line',
       paint: {
         'line-color': 'black'
@@ -193,7 +193,7 @@ function rankStyle(prodkatCode, name, categories, center = [13.3, 47.7], zoom = 
   style.layers.push(/** @type {*} */ ({
     id: 'bl',
     source: 'tiles',
-    'source-layer': 'bl',
+    'source-layer': 'kg',
     type: 'line',
     paint: {
       'line-color': 'black'

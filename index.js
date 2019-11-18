@@ -23,10 +23,12 @@ let previousMap;
 const configureMap = map => {
   previousMap = map;
   const kgLayer = /** @type {import("ol/layer/VectorTile").default} */ (getLayers(map, 'tiles')[0]);
+  const kgSource = kgLayer.getSource();
+  kgSource.overlaps_ = false;
 
   // Add a layer for KG/Gemeinde highlighting
   const highlightLayer = new VectorTile({
-    source: kgLayer.getSource(),
+    source: kgSource,
     visible: false
   });
   map.addLayer(highlightLayer);

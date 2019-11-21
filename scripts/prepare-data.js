@@ -151,6 +151,7 @@ featureCollection.features.forEach(feature => {
     }
   }
   feature.id = Number(kgNr);
+  delete properties.KG;
   delete properties.KG_NR;
   delete properties.BKZ;
   delete properties.BL;

@@ -35,10 +35,12 @@ npm run tiles
 
 ### Assets for the A3FL app
 
-* bundeslaender.csv - CSV with Bundesland Code, Name and Bbox
-* bezirke.csv - CSV with Bezirk Code, Name and Bbox
-* gemeinden.csv - CSV with Gemeinde Code, Name and Bbox
-* katastralgemeinden.csv - CSV with Katastralgemeinde Code, Name and Bbox
+* data/bundeslaender.csv - CSV with Bundesland Code, Name and Bbox
+* data/bezirke.csv - CSV with Bezirk Code, Name and Bbox
+* data/gemeinden.csv - CSV with Gemeinde Code, Name and Bbox
+* data/katastralgemeinden.csv - CSV with Katastralgemeinde Code, Name and Bbox
+* dist/tiles-pct/ - Mapbox vector tiles for percent maps
+* dist/tiles-t1v/ - Mapbox vector tiles for top1 (variable) maps
 
 ## Start the application
 

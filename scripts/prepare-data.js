@@ -90,13 +90,12 @@ lines.forEach(line => {
       }
     }
   } else if (topic === 'pct') {
-  // Percent
-  const percent = Number(line[column.PRODKAT_PROZ_FL_BEAN_KUB_VWE].replace(',', '.'));
-  if (percent !== 0) {
-    item[`${line[column.PRODKAT_CODE]}_PCT`] = percent;
+    // Percent
+    const percent = Number(line[column.PRODKAT_PROZ_FL_BEAN_KUB_VWE].replace(',', '.'));
+    if (percent !== 0) {
+      item[`${line[column.PRODKAT_CODE]}_PCT`] = percent;
+    }
   }
-}
-
 
   items[kgNr] = item;
 });

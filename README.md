@@ -24,12 +24,21 @@ npm run data
 npm run tiles
 ```
 
+### Tile creation (requires Tippecanoe)
+
 **Note:** To generate tiles for a different file, call the following scripts:
 ```bash
 npm run external-data
 CSV=path/to/MY-DATA.CSV npm run prepare-data
 npm run tiles
 ```
+
+### Assets for the A3FL app
+
+* bundeslaender.csv - CSV with Bundesland Code, Name and Bbox
+* bezirke.csv - CSV with Bezirk Code, Name and Bbox
+* gemeinden.csv - CSV with Gemeinde Code, Name and Bbox
+* katastralgemeinden.csv - CSV with Katastralgemeinde Code, Name and Bbox
 
 ## Start the application
 

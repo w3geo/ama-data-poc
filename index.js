@@ -35,8 +35,8 @@ const configureMap = map => {
 
   let selected, selectWhat;
 
-  // Click handler for map clicks
-  map.on('click', e => {
+  // Handler for kg/gem highlighting
+  map.on(['click', 'pointermove'], e => {
     selectWhat = highlightSelect.options[highlightSelect.selectedIndex].value;
     kgLayer.getFeatures(e.pixel).then(features => {
       const newSelected = features.length ?
@@ -57,7 +57,7 @@ const configureMap = map => {
     })
   });
   highlightLayer.setStyle(function(feature) {
-    if (selected && (selectWhat === 'KG' ? feature.getId() : feature.get('GKZ')) === selected) {
+    if (selected && feature.get('layer') === 'kg' && (selectWhat === 'KG' ? feature.getId() : feature.get('GKZ')) === selected) {
       return highlightStyle;
     }
   });
@@ -102,7 +102,7 @@ const configureMap = map => {
     }
     target.title = '';
     kgLayer.getFeatures(e.pixel).then(features => {
-      const feature = features.length ? features[0] : undefined;
+      const feature = features.length && features[0].get('layer') === 'kg' ? features[0] : undefined;
       mouseoverInfo.innerHTML = feature ? mouseover({}, {properties: feature.getProperties()}) : '';
     });
   }

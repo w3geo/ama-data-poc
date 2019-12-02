@@ -27,7 +27,7 @@ export function updateLegend(layer, style, extent, resolution) {
   if (!features) {
     return;
   }
-console.log('legend')
+
   previousExtent = extentString;
   previousStyle = style;  
 

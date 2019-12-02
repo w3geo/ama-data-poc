@@ -6,6 +6,7 @@ import styles from './src/style';
 import { updateLegend } from './src/legend';
 import { toLonLat, transformExtent } from 'ol/proj';
 import { expression } from '@mapbox/mapbox-gl-style-spec';
+import VectorTileSource from './src/VectorTileSource';
 import productCategories from './data/prodkat-codes.json';
 import { MVT } from 'ol/src/format';
 
@@ -26,6 +27,13 @@ const configureMap = map => {
   previousMap = map;
   const kgLayer = /** @type {import("ol/layer/VectorTile").default} */ (getLayers(map, 'tiles')[0]);
   const kgSource = kgLayer.getSource();
+  const newSource = new VectorTileSource({
+    overlaps: false,
+    tileGrid: kgSource.getTileGrid(),
+    urls: kgSource.getUrls(),
+    format: mvt
+  });
+  kgLayer.setSource(newSource);
 
   // Add a layer for KG/Gemeinde highlighting
   const highlightLayer = new VectorTile({
@@ -66,7 +74,12 @@ const configureMap = map => {
   const style = map.get('mapbox-style');
 
   // Add legend
-  updateLegend(style);
+  map.on('postcompose', e => {
+    const view = map.getView();
+    if (!view.getAnimating() && !view.getInteracting()) {
+      updateLegend(kgLayer, style, e.frameState.extent, e.frameState.viewState.resolution);
+    }
+  });
 
   // Add mouseover
   let mouseover;

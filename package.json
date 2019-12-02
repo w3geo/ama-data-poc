@@ -27,6 +27,7 @@
   "dependencies": {
     "@mapbox/mapbox-gl-style-spec": "^13.7.2",
     "geojson-bbox": "0.0.0",
+    "hex2rgba": "0.0.1",
     "ol": "^6.1.1-dev.1575196529512",
     "ol-mapbox-style": "^5.0.2"
   },

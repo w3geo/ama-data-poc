@@ -2,11 +2,14 @@ import 'ol/ol.css';
 import createMap, { getLayers } from 'ol-mapbox-style';
 import { VectorTile } from 'ol/layer';
 import { Style, Fill } from 'ol/style';
-import styles from './style';
+import styles from './src/style';
+import { updateLegend } from './src/legend';
 import { toLonLat, transformExtent } from 'ol/proj';
 import { expression } from '@mapbox/mapbox-gl-style-spec';
 import productCategories from './data/prodkat-codes.json';
+import { MVT } from 'ol/src/format';
 
+const mvt = new MVT();
 
 const mapSelect = /** @type {HTMLSelectElement} */ (document.getElementById('map-select'));
 const styleNames = Object.keys(styles).sort((a, b) => a.localeCompare(b));
@@ -23,7 +26,6 @@ const configureMap = map => {
   previousMap = map;
   const kgLayer = /** @type {import("ol/layer/VectorTile").default} */ (getLayers(map, 'tiles')[0]);
   const kgSource = kgLayer.getSource();
-  kgSource.overlaps_ = false;
 
   // Add a layer for KG/Gemeinde highlighting
   const highlightLayer = new VectorTile({
@@ -64,22 +66,7 @@ const configureMap = map => {
   const style = map.get('mapbox-style');
 
   // Add legend
-  const legend = document.getElementById('legend');
-  if (style.metadata && 'ama:legend' in style.metadata) {
-    const legendData = style.metadata['ama:legend'];
-    let legendMarkup = '<table>';
-    for (const key in legendData) {
-      let value = legendData[key];
-      if (value in productCategories) {
-        value = productCategories[value];
-      }
-      legendMarkup += `<tr><td style="width:16px;background-color:${key}">&nbsp;</td><td>${value}</td></tr>`;
-    }
-    legendMarkup += '</table>';
-    legend.innerHTML = legendMarkup;
-  } else {
-    legend.innerHTML = '';
-  }
+  updateLegend(style);
 
   // Add mouseover
   let mouseover;
@@ -101,7 +88,7 @@ const configureMap = map => {
     }
     target.title = '';
     kgLayer.getFeatures(e.pixel).then(features => {
-      const feature = features.length && features[0].get('layer') === 'kg' ? features[0] : undefined;
+      const feature = features.length ? features[0] : undefined;
       mouseoverInfo.innerHTML = feature ? mouseover({}, {properties: feature.getProperties()}) : '';
     });
   }

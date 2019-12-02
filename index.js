@@ -5,7 +5,6 @@ import { Style, Fill } from 'ol/style';
 import styles from './style';
 import { toLonLat, transformExtent } from 'ol/proj';
 import { expression } from '@mapbox/mapbox-gl-style-spec';
-// @ts-ignore
 import productCategories from './data/prodkat-codes.json';
 
 

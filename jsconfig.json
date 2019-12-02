@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "checkJs": true,
+    "resolveJsonModule": true,
     // Point to the JSDoc typed sources when using modules from the ol package
     "baseUrl": "./",
     "paths": {
